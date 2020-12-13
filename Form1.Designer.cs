@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.NewGameButton = new System.Windows.Forms.Button();
             this.BotButton = new System.Windows.Forms.Button();
             this.HelpButton = new System.Windows.Forms.Button();
@@ -39,21 +38,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.playerOneIcon)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.playerTwoIcon)).BeginInit();
             this.SuspendLayout();
-            // 
-            // tableLayoutPanel1
-            // 
-            this.tableLayoutPanel1.ColumnCount = 2;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(253, 548);
-            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(4);
-            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 2;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(811, 538);
-            this.tableLayoutPanel1.TabIndex = 0;
-            this.tableLayoutPanel1.Paint += new System.Windows.Forms.PaintEventHandler(this.tableLayoutPanel1_Paint);
+
             // 
             // NewGameButton
             // 
@@ -134,6 +119,7 @@
             this.Controls.Add(this.tableLayoutPanel1);
             this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "MainWindow";
+
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.playerOneIcon)).EndInit();
@@ -145,7 +131,6 @@
 
         #endregion
 
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.Button NewGameButton;
         private System.Windows.Forms.Button BotButton;
         private System.Windows.Forms.Button HelpButton;
@@ -153,6 +138,7 @@
         private System.Windows.Forms.PictureBox playerTwoIcon;
         private System.Windows.Forms.Label playerOneIconName;
         private System.Windows.Forms.Label playerTwoIconName;
+
     }
 }
 
