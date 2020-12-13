@@ -1,6 +1,6 @@
 ﻿namespace Reversi
 {
-    partial class Form1
+    partial class MainWindow
     {
         /// <summary>
         /// Required designer variable.
@@ -29,6 +29,15 @@
         private void InitializeComponent()
         {
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.NewGameButton = new System.Windows.Forms.Button();
+            this.BotButton = new System.Windows.Forms.Button();
+            this.HelpButton = new System.Windows.Forms.Button();
+            this.playerOneIcon = new System.Windows.Forms.PictureBox();
+            this.playerTwoIcon = new System.Windows.Forms.PictureBox();
+            this.playerOneIconName = new System.Windows.Forms.Label();
+            this.playerTwoIconName = new System.Windows.Forms.Label();
+            ((System.ComponentModel.ISupportInitialize)(this.playerOneIcon)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.playerTwoIcon)).BeginInit();
             this.SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -36,31 +45,114 @@
             this.tableLayoutPanel1.ColumnCount = 2;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(190, 438);
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(253, 548);
+            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(4);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 2;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(608, 430);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(811, 538);
             this.tableLayoutPanel1.TabIndex = 0;
             this.tableLayoutPanel1.Paint += new System.Windows.Forms.PaintEventHandler(this.tableLayoutPanel1_Paint);
             // 
-            // Form1
+            // NewGameButton
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
+            this.NewGameButton.Location = new System.Drawing.Point(253, 116);
+            this.NewGameButton.Name = "NewGameButton";
+            this.NewGameButton.Size = new System.Drawing.Size(183, 74);
+            this.NewGameButton.TabIndex = 1;
+            this.NewGameButton.Text = "New 1v1 game";
+            this.NewGameButton.UseVisualStyleBackColor = true;
+            this.NewGameButton.Click += new System.EventHandler(this.NewGameButton_Click);
+            // 
+            // BotButton
+            // 
+            this.BotButton.Location = new System.Drawing.Point(548, 116);
+            this.BotButton.Name = "BotButton";
+            this.BotButton.Size = new System.Drawing.Size(183, 74);
+            this.BotButton.TabIndex = 2;
+            this.BotButton.Text = "New 1vBot game";
+            this.BotButton.UseVisualStyleBackColor = true;
+            this.BotButton.Click += new System.EventHandler(this.BotButton_Click);
+            // 
+            // HelpButton
+            // 
+            this.HelpButton.Location = new System.Drawing.Point(881, 116);
+            this.HelpButton.Name = "HelpButton";
+            this.HelpButton.Size = new System.Drawing.Size(183, 74);
+            this.HelpButton.TabIndex = 3;
+            this.HelpButton.Text = "Help";
+            this.HelpButton.UseVisualStyleBackColor = true;
+            this.HelpButton.Click += new System.EventHandler(this.HelpButton_Click);
+            // 
+            // playerOneIcon
+            // 
+            this.playerOneIcon.Location = new System.Drawing.Point(253, 240);
+            this.playerOneIcon.Name = "playerOneIcon";
+            this.playerOneIcon.Size = new System.Drawing.Size(100, 100);
+            this.playerOneIcon.TabIndex = 4;
+            this.playerOneIcon.TabStop = false;
+            // 
+            // playerTwoIcon
+            // 
+            this.playerTwoIcon.Location = new System.Drawing.Point(253, 377);
+            this.playerTwoIcon.Name = "playerTwoIcon";
+            this.playerTwoIcon.Size = new System.Drawing.Size(100, 100);
+            this.playerTwoIcon.TabIndex = 5;
+            this.playerTwoIcon.TabStop = false;
+            // 
+            // playerOneIconName
+            // 
+            this.playerOneIconName.AutoSize = true;
+            this.playerOneIconName.Location = new System.Drawing.Point(372, 275);
+            this.playerOneIconName.Name = "playerOneIconName";
+            this.playerOneIconName.Size = new System.Drawing.Size(92, 25);
+            this.playerOneIconName.TabIndex = 6;
+            this.playerOneIconName.Text = "Speler 1";
+            // 
+            // playerTwoIconName
+            // 
+            this.playerTwoIconName.AutoSize = true;
+            this.playerTwoIconName.Location = new System.Drawing.Point(372, 417);
+            this.playerTwoIconName.Name = "playerTwoIconName";
+            this.playerTwoIconName.Size = new System.Drawing.Size(92, 25);
+            this.playerTwoIconName.TabIndex = 7;
+            this.playerTwoIconName.Text = "Speler 2";
+            // 
+            // MainWindow
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1020, 1069);
+            this.ClientSize = new System.Drawing.Size(1360, 1336);
+            this.Controls.Add(this.playerTwoIconName);
+            this.Controls.Add(this.playerOneIconName);
+            this.Controls.Add(this.playerTwoIcon);
+            this.Controls.Add(this.playerOneIcon);
+            this.Controls.Add(this.HelpButton);
+            this.Controls.Add(this.BotButton);
+            this.Controls.Add(this.NewGameButton);
             this.Controls.Add(this.tableLayoutPanel1);
-            this.Name = "Form1";
+            this.Margin = new System.Windows.Forms.Padding(4);
+            this.Name = "MainWindow";
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.Form1_Load);
+            ((System.ComponentModel.ISupportInitialize)(this.playerOneIcon)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.playerTwoIcon)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
         #endregion
 
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+        private System.Windows.Forms.Button NewGameButton;
+        private System.Windows.Forms.Button BotButton;
+        private System.Windows.Forms.Button HelpButton;
+        private System.Windows.Forms.PictureBox playerOneIcon;
+        private System.Windows.Forms.PictureBox playerTwoIcon;
+        private System.Windows.Forms.Label playerOneIconName;
+        private System.Windows.Forms.Label playerTwoIconName;
     }
 }
 
