@@ -21,7 +21,7 @@ namespace Reversi
         public int[,] boardState = new int[6, 6];
         int currentPlayer = 1;
         IDictionary<int, Color> pieceColor = new Dictionary<int, Color> { { 1, Color.Black }, { 2, Color.White } };
-
+        
         public MainWindow()
 
         {
@@ -91,7 +91,7 @@ namespace Reversi
             {
                 c.MouseClick += new MouseEventHandler(this.Clicked);
             }
-
+            
         }
 
         private void Clicked(object sender, MouseEventArgs mea)
@@ -221,7 +221,7 @@ namespace Reversi
            //Custom ToString method for easy debugging.
             public override string ToString() => $"({X}, {Y}) now for: player{currentPlayer}";
         }
-
+    
         private void draw(object sender, TableLayoutCellPaintEventArgs tlcpea)
         {
             Brush brushColor = null;
