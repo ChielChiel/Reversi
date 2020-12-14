@@ -12,13 +12,14 @@ namespace Reversi
 {
     public partial class MainWindow : Form
     {
-
-
         private PopupWindow Popup;
         public String playerOne;
         public String playerTwo;
         public int boardSize = 6;
         TableLayoutPanel board = new TableLayoutPanel();
+        public int[,] boardState = new int[6, 6];
+        int currentPlayer = 1;
+
         public MainWindow()
 
         {
@@ -41,15 +42,17 @@ namespace Reversi
             this.board.Name = "board";
             this.board.Location = new System.Drawing.Point(200, 200);
             this.board.Size = new System.Drawing.Size(50* boardSize + boardSize, 50* boardSize + boardSize);
-            Controls.Add(this.board);
 
-            for(; this.board.ColumnCount < columns; this.board.ColumnCount++) {
+            this.board.CellPaint += new TableLayoutCellPaintEventHandler(this.draw);
+
+            for (; this.board.ColumnCount < columns; this.board.ColumnCount++) {
                 this.board.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
             }
             for (; this.board.RowCount < rows; this.board.RowCount++)
             {
                 this.board.RowStyles.Add(new RowStyle(SizeType.Absolute, 50F));
             }
+            //this code adds a control to each panel of the board
             Dictionary<int, Panel> boardPanels = new Dictionary<int, Panel>();
             int panelIndex = 1;
             for(int x = 0; x < boardSize; x++)
@@ -64,22 +67,49 @@ namespace Reversi
             }
 
             this.board.CellBorderStyle = TableLayoutPanelCellBorderStyle.Single;
-            // this is the on click function for each panel in the tablelayoutpanel
+            // this is the on click function for each panel in the tablelayoutpanel, it does this by adding a control to each panel
+            Controls.Add(this.board);
             Console.WriteLine(this.board.Controls);
             foreach (Control c in this.board.Controls)
             {
                 c.MouseClick += new MouseEventHandler(this.Clicked);
             }
-
+            
         }
 
-        private void Clicked(object sender, MouseEventArgs e)
+        private void Clicked(object sender, MouseEventArgs mea)
         {
-            Console.WriteLine("column" + this.board.GetColumn((Panel)sender));
-            Console.WriteLine("row" + this.board.GetRow((Panel)sender));
+            int column = this.board.GetColumn((Panel)sender);
+            int row = this.board.GetRow((Panel)sender);
 
+            boardState[column, row] = currentPlayer;
+            if(currentPlayer == 2)
+            {
+                currentPlayer = 1;
+            }
+            else
+            {
+                currentPlayer = 2;
+            }
+
+            this.board.Invalidate();
+            
         }
+        private void draw(object sender, TableLayoutCellPaintEventArgs tlcpea)
+        {
+          if(boardState[tlcpea.Column,tlcpea.Row] == 0)
+            {
+               
+            }else if (boardState[tlcpea.Column, tlcpea.Row] == 1)
+            {
+                tlcpea.Graphics.FillEllipse(Brushes.Red, tlcpea.CellBounds);
+            }
+            else
+            {
+                tlcpea.Graphics.FillEllipse(Brushes.Blue, tlcpea.CellBounds);
 
+            }
+        }
         //Buttons
         private void NewGameButton_Click(object sender, EventArgs e)
         {
