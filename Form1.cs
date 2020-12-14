@@ -3,37 +3,37 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Drawing.Drawing2D;
 
 namespace Reversi
 {
     public partial class MainWindow : Form
     {
-
-
         private PopupWindow Popup;
         public String playerOne;
         public String playerTwo;
         public int boardSize = 6;
         TableLayoutPanel board = new TableLayoutPanel();
+        public int[,] boardState = new int[6, 6];
+        int currentPlayer = 1;
+        IDictionary<int, Color> pieceColor = new Dictionary<int, Color> { { 1, Color.Black }, { 2, Color.White } };
+
         public MainWindow()
 
         {
             InitializeComponent();
-            
             GraphicsPath path = new GraphicsPath();
             path.AddEllipse(0, 0, 50, 50);
-            this.playerOneIcon.BackColor = Color.Black;
+
+            this.playerOneIcon.BackColor = pieceColor[1];
             this.playerOneIcon.Region = new Region(path);
-            
-            this.playerTwoIcon.BackColor = Color.White;
+
+            this.playerTwoIcon.BackColor = pieceColor[2];
             this.playerTwoIcon.Region = this.playerOneIcon.Region;
-
-
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -43,38 +43,43 @@ namespace Reversi
 
             int columns = 6;
             int rows = 6;
-            
+
             this.Width = 800;
             this.Height = 800;
-            
+
             this.board.Name = "board";
             this.board.Location = new System.Drawing.Point(200, 200);
-            this.board.Size = new System.Drawing.Size(50* boardSize + boardSize, 50* boardSize + boardSize);
-            Controls.Add(this.board);
+            this.board.Size = new System.Drawing.Size(50 * boardSize + boardSize, 50 * boardSize + boardSize);
+            this.board.BackColor = Color.DarkGreen;
 
-            for(; this.board.ColumnCount < columns; this.board.ColumnCount++) {
+            this.board.CellPaint += new TableLayoutCellPaintEventHandler(this.draw);
+
+            for (; this.board.ColumnCount < columns; this.board.ColumnCount++)
+            {
                 this.board.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
             }
             for (; this.board.RowCount < rows; this.board.RowCount++)
             {
                 this.board.RowStyles.Add(new RowStyle(SizeType.Absolute, 50F));
             }
+            //this code adds a control to each panel of the board
             Dictionary<int, Panel> boardPanels = new Dictionary<int, Panel>();
             int panelIndex = 1;
-            for(int x = 0; x < boardSize; x++)
+            for (int x = 0; x < boardSize; x++)
             {
-                for(int y = 0; y < boardSize; y++)
+                for (int y = 0; y < boardSize; y++)
                 {
                     boardPanels.Add(panelIndex, new Panel());
-                    this.board.Controls.Add(boardPanels[panelIndex],x,y);
+                    this.board.Controls.Add(boardPanels[panelIndex], x, y);
                     panelIndex++;
                 }
 
             }
 
             this.board.CellBorderStyle = TableLayoutPanelCellBorderStyle.Single;
-            // this is the on click function for each panel in the tablelayoutpanel
-            Console.WriteLine(this.board.Controls);
+            // this is the on click function for each panel in the tablelayoutpanel, it does this by adding a control to each panel
+            //Console.WriteLine(this.board.Controls);
+            Controls.Add(this.board);
             foreach (Control c in this.board.Controls)
             {
                 c.MouseClick += new MouseEventHandler(this.Clicked);
@@ -82,19 +87,40 @@ namespace Reversi
 
         }
 
-        //Board is clicked; Nu dus validaten.
-        private void Clicked(object sender, MouseEventArgs e)
+        private void Clicked(object sender, MouseEventArgs mea)
         {
-            Console.WriteLine("hall?");
-            /*
-            int Beurt = 1;
-            int x = this.board.GetColumn((Panel)sender);
-            int y = this.board.GetRow((Panel)sender);
-            Console.WriteLine("column" + x);
-            Console.WriteLine("row" + y);
-            */
-        }
+            int column = this.board.GetColumn((Panel)sender);
+            int row = this.board.GetRow((Panel)sender);
 
+            boardState[column, row] = currentPlayer;
+            this.currentPlayer = (this.currentPlayer == 1 ? 2 : 1);
+            this.board.Invalidate();
+
+        }
+        private void draw(object sender, TableLayoutCellPaintEventArgs tlcpea)
+        {
+            Color brushColor = null;
+
+            switch (boardState[tlcpea.Column, tlcpea.Row]) {
+                case 1:
+                    brushColor = pieceColor[1];
+                    break;
+                case 2:
+                    brushColor = pieceColor[2];
+                    break;
+                default:
+                    break;
+            }
+
+            if (brushColor != null)
+            {
+               
+//                tlcpea.Graphics.FillEllipse(pieceColor, tlcpea.CellBounds);
+                tlcpea.Graphics.FillEllipse(new SolidBrush(brushColor), tlcpea.CellBounds);
+                
+
+            }
+        }
         //Buttons
         private void NewGameButton_Click(object sender, EventArgs e)
         {
