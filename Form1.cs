@@ -49,8 +49,8 @@ namespace Reversi
             this.Height = 800;
 
             this.board.Name = "board";
-            this.board.Location = new System.Drawing.Point(200, 200);
-            this.board.Size = new System.Drawing.Size(50 * boardSize + boardSize, 50 * boardSize + boardSize);
+            this.board.Location = new Point(200, 200);
+            this.board.Size = new Size(50 * boardSize + boardSize, 50 * boardSize + boardSize);
             this.board.BackColor = Color.DarkGreen;
 
             this.board.CellPaint += new TableLayoutCellPaintEventHandler(this.draw);
@@ -63,19 +63,7 @@ namespace Reversi
             {
                 this.board.RowStyles.Add(new RowStyle(SizeType.Absolute, 50F));
             }
-            //this code adds a control to each panel of the board
-            Dictionary<int, Panel> boardPanels = new Dictionary<int, Panel>();
-            int panelIndex = 1;
-            for (int x = 0; x < boardSize; x++)
-            {
-                for (int y = 0; y < boardSize; y++)
-                {
-                    boardPanels.Add(panelIndex, new Panel());
-                    this.board.Controls.Add(boardPanels[panelIndex], x, y);
-                    panelIndex++;
-                }
-
-            }
+            this.board.MouseClick += new MouseEventHandler(this.Clicked);
 
             //Setup first 4 pieces in the middle of the board:
             boardState[columns / 2 - 1, rows / 2 - 1] = 1;
@@ -83,29 +71,26 @@ namespace Reversi
             boardState[columns / 2, rows / 2] = 1;
             boardState[columns / 2, rows / 2 - 1] = 2;
 
-
             this.board.CellBorderStyle = TableLayoutPanelCellBorderStyle.Single;
             // this is the on click function for each panel in the tablelayoutpanel, it does this by adding a control to each panel
             Controls.Add(this.board);
-            foreach (Control c in this.board.Controls)
-            {
-                c.MouseClick += new MouseEventHandler(this.Clicked);
-            }
             
         }
 
         private void Clicked(object sender, MouseEventArgs mea)
         {
-            int x = this.board.GetColumn((Panel)sender);
-            int y = this.board.GetRow((Panel)sender);
-            Console.WriteLine(x + "," + y);
+            Point translatedPoint = this.getPointFromMEA(mea.Location);
+            int column = translatedPoint.X;
+            int row = translatedPoint.Y;
+            
+            Console.WriteLine(column + "," + row);
 
             //Get here the valid moves/flips for the current coordinates.
-            placingCoord[] flips = getValidMoves(x, y, currentPlayer);
+            placingCoord[] flips = getValidMoves(column, row, currentPlayer);
             Console.WriteLine("def flips: " + flips.Length);
             if (flips.Length != 0)
             {
-                boardState[x, y] = currentPlayer;
+                boardState[column, row] = currentPlayer;
                 foreach (placingCoord flip in flips)
                 {
                     boardState[flip.X, flip.Y] = currentPlayer;
@@ -131,6 +116,14 @@ namespace Reversi
             }
             this.board.Invalidate();
 
+        }
+
+
+        private Point getPointFromMEA(Point meaPoint) 
+        {
+            int x = (int)(meaPoint.X / 50f);
+            int y = (int)(meaPoint.Y / 50f);
+            return new Point(x, y);
         }
 
         private placingCoord[] getValidMoves(int column, int row, int currentPlayer)
@@ -214,7 +207,6 @@ namespace Reversi
                 Y = y;
                 currentPlayer = player;
             }
-
             public int X { get; set; }
             public int Y { get; set; }
             public int currentPlayer { get; set; }
@@ -236,7 +228,7 @@ namespace Reversi
                 default:
                     break;
             }
-
+            tlcpea.Graphics.SmoothingMode = SmoothingMode.HighQuality;
             if (brushColor != null)
             {
                 tlcpea.Graphics.FillEllipse(brushColor, tlcpea.CellBounds);
