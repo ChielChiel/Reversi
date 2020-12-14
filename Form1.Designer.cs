@@ -116,7 +116,6 @@
             this.Controls.Add(this.HelpButton);
             this.Controls.Add(this.BotButton);
             this.Controls.Add(this.NewGameButton);
-            this.Controls.Add(this.tableLayoutPanel1);
             this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "MainWindow";
 
