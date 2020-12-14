@@ -17,7 +17,7 @@ namespace Reversi
         private PopupWindow Popup;
         public String playerOne;
         public String playerTwo;
-        public int boardSize;
+        public int boardSize = 6;
         TableLayoutPanel board = new TableLayoutPanel();
         public MainWindow()
 
@@ -40,7 +40,7 @@ namespace Reversi
             
             this.board.Name = "board";
             this.board.Location = new System.Drawing.Point(50, 50);
-            this.board.Size = new System.Drawing.Size(50*columns+columns, 50*rows+rows);
+            this.board.Size = new System.Drawing.Size(50* boardSize + boardSize, 50* boardSize + boardSize);
             Controls.Add(this.board);
 
             for(; this.board.ColumnCount < columns; this.board.ColumnCount++) {
@@ -52,9 +52,9 @@ namespace Reversi
             }
             Dictionary<int, Panel> boardPanels = new Dictionary<int, Panel>();
             int panelIndex = 1;
-            for(int x = 0; x < columns; x++)
+            for(int x = 0; x < boardSize; x++)
             {
-                for(int y = 0; y < rows; y++)
+                for(int y = 0; y < boardSize; y++)
                 {
                     boardPanels.Add(panelIndex, new Panel());
                     this.board.Controls.Add(boardPanels[panelIndex],x,y);
