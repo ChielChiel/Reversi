@@ -41,7 +41,6 @@ namespace Reversi
             this.board.Name = "board";
             this.board.Location = new System.Drawing.Point(200, 200);
             this.board.Size = new System.Drawing.Size(50* boardSize + boardSize, 50* boardSize + boardSize);
-            Controls.Add(this.board);
 
             for(; this.board.ColumnCount < columns; this.board.ColumnCount++) {
                 this.board.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
@@ -66,6 +65,7 @@ namespace Reversi
             this.board.CellBorderStyle = TableLayoutPanelCellBorderStyle.Single;
             // this is the on click function for each panel in the tablelayoutpanel
             Console.WriteLine(this.board.Controls);
+            Controls.Add(this.board);
             foreach (Control c in this.board.Controls)
             {
                 c.MouseClick += new MouseEventHandler(this.Clicked);
