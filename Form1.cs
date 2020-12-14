@@ -39,7 +39,7 @@ namespace Reversi
             this.Height = 800;
             
             this.board.Name = "board";
-            this.board.Location = new System.Drawing.Point(50, 50);
+            this.board.Location = new System.Drawing.Point(200, 200);
             this.board.Size = new System.Drawing.Size(50* boardSize + boardSize, 50* boardSize + boardSize);
             Controls.Add(this.board);
 
