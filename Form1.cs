@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Drawing.Drawing2D;
 
 namespace Reversi
 {
@@ -23,8 +24,16 @@ namespace Reversi
 
         {
             InitializeComponent();
+            
+            GraphicsPath path = new GraphicsPath();
+            path.AddEllipse(0, 0, 50, 50);
             this.playerOneIcon.BackColor = Color.Black;
+            this.playerOneIcon.Region = new Region(path);
+            
             this.playerTwoIcon.BackColor = Color.White;
+            this.playerTwoIcon.Region = this.playerOneIcon.Region;
+
+
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -73,11 +82,17 @@ namespace Reversi
 
         }
 
+        //Board is clicked; Nu dus validaten.
         private void Clicked(object sender, MouseEventArgs e)
         {
-            Console.WriteLine("column" + this.board.GetColumn((Panel)sender));
-            Console.WriteLine("row" + this.board.GetRow((Panel)sender));
-
+            Console.WriteLine("hall?");
+            /*
+            int Beurt = 1;
+            int x = this.board.GetColumn((Panel)sender);
+            int y = this.board.GetRow((Panel)sender);
+            Console.WriteLine("column" + x);
+            Console.WriteLine("row" + y);
+            */
         }
 
         //Buttons
