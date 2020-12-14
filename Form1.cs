@@ -31,7 +31,8 @@ namespace Reversi
 
             this.playerOneIcon.BackColor = pieceColor[1];
             this.playerOneIcon.Region = new Region(path);
-
+            this.playerOneIconName.ForeColor = Color.Red;
+            
             this.playerTwoIcon.BackColor = pieceColor[2];
             this.playerTwoIcon.Region = this.playerOneIcon.Region;
         }
@@ -76,9 +77,15 @@ namespace Reversi
 
             }
 
+            //Setup first 4 pieces in the middle of the board:
+            boardState[columns / 2 - 1, rows / 2 - 1] = 1;
+            boardState[columns / 2 - 1, rows / 2] = 2;
+            boardState[columns / 2, rows / 2] = 1;
+            boardState[columns / 2, rows / 2 - 1] = 2;
+
+
             this.board.CellBorderStyle = TableLayoutPanelCellBorderStyle.Single;
             // this is the on click function for each panel in the tablelayoutpanel, it does this by adding a control to each panel
-            //Console.WriteLine(this.board.Controls);
             Controls.Add(this.board);
             foreach (Control c in this.board.Controls)
             {
@@ -89,24 +96,142 @@ namespace Reversi
 
         private void Clicked(object sender, MouseEventArgs mea)
         {
-            int column = this.board.GetColumn((Panel)sender);
-            int row = this.board.GetRow((Panel)sender);
+            int x = this.board.GetColumn((Panel)sender);
+            int y = this.board.GetRow((Panel)sender);
+            Console.WriteLine(x + "," + y);
 
-            boardState[column, row] = currentPlayer;
-            this.currentPlayer = (this.currentPlayer == 1 ? 2 : 1);
+            //Get here the valid moves/flips for the current coordinates.
+            placingCoord[] flips = getValidMoves(x, y, currentPlayer);
+            Console.WriteLine("def flips: " + flips.Length);
+            if (flips.Length != 0)
+            {
+                boardState[x, y] = currentPlayer;
+                foreach (placingCoord flip in flips)
+                {
+                    boardState[flip.X, flip.Y] = currentPlayer;
+                }
+                this.currentPlayer = (this.currentPlayer == 1 ? 2 : 1);
+
+            }
+            else 
+            {
+                //There are no pieces flippable so the current player has to do another turn
+                //TODO: Add a warning message
+            }
+            if(this.currentPlayer == 1)
+            {
+                this.playerOneIconName.ForeColor = Color.Red;
+                this.playerTwoIconName.ForeColor = Color.Black;
+            }
+            else
+            {
+                this.playerOneIconName.ForeColor = Color.Black;
+                this.playerTwoIconName.ForeColor = Color.Red;
+
+            }
             this.board.Invalidate();
 
         }
+
+        private placingCoord[] getValidMoves(int column, int row, int currentPlayer)
+        {
+            int[] places = new int[] { -1, 0, 1 };
+
+            List<placingCoord> flipsToReturn = new List<placingCoord>();
+
+            if (boardState[column, row] != 0)
+            {
+                //This means that the place is already occupied by one of the player's pieces.
+                return flipsToReturn.ToArray();
+            }
+
+            //Loop through every piece surrounding the clicked one.
+            for (int dx = 0; dx < places.Length; dx++) 
+            {
+                for (int dy = 0; dy < places.Length; dy++) 
+                {
+                    try
+                    {
+                        //Console.WriteLine("x: " + (column + places[dx]) + ", y: " + (row + places[dy]) + "; " + boardState[column + places[dx], row + places[dy]]);
+                        if (boardState[column + places[dx], row + places[dy]] != currentPlayer && boardState[column + places[dx], row + places[dy]] != 0)
+                        {
+                            //Console.WriteLine("x: " +  column + ", y: " + row + "; is a possible move");
+                            //Console.WriteLine("x: " + (column + places[dx]) + ", y: " + (row + places[dy]) + "; could be closed in");
+                            
+                            //Check here whether the possible moves actually close-in pieces of the opponent.
+                            List<placingCoord> tempFlipPieces = new List<placingCoord>();
+
+                            try
+                            {
+                                for (int i = 1; i < this.boardSize; i++) 
+                                {
+                                    int tempX = i * places[dx] + column;
+                                    int tempY = i * places[dy] + row;
+                                    Console.WriteLine("searching x: " + tempX + ", y: " + tempY + "; for a possible move");
+                                    if (boardState[tempX, tempY] == currentPlayer)
+                                    {
+                                        //stop searching
+                                        i = this.boardSize;
+                                    }
+                                    else if (boardState[tempX, tempY] != currentPlayer && boardState[tempX, tempY] != 0)
+                                    {
+                                        tempFlipPieces.Add(new placingCoord(tempX, tempY, currentPlayer));
+
+                                    }
+                                    else
+                                    {
+                                        tempFlipPieces.Clear();
+                                    }
+                                }
+                                flipsToReturn.AddRange(tempFlipPieces);
+                                //Console.WriteLine("flips to return?: " + flipsToReturn.Count);
+
+                            }
+                            catch (IndexOutOfRangeException)
+                            {
+                                //Out of range. But nothing has to be done
+                            }
+
+                        }
+                    }
+                    catch (IndexOutOfRangeException) {
+                        //Out of range. But nothing has to be done
+                    }
+
+
+                }
+            }
+            //Return all the pieces that will be flipped.
+            return flipsToReturn.ToArray();
+        }
+
+        //Struct holding the x and y coordinates of a (possible) flip as well as the current player.
+        public struct placingCoord
+        {
+            public placingCoord(int x, int y, int player)
+            {
+                X = x;
+                Y = y;
+                currentPlayer = player;
+            }
+
+            public int X { get; set; }
+            public int Y { get; set; }
+            public int currentPlayer { get; set; }
+           //Custom ToString method for easy debugging.
+            public override string ToString() => $"({X}, {Y}) now for: player{currentPlayer}";
+        }
+
         private void draw(object sender, TableLayoutCellPaintEventArgs tlcpea)
         {
-            Color brushColor = null;
+            Brush brushColor = null;
 
             switch (boardState[tlcpea.Column, tlcpea.Row]) {
                 case 1:
-                    brushColor = pieceColor[1];
+                    brushColor = new SolidBrush(pieceColor[1]);
                     break;
                 case 2:
-                    brushColor = pieceColor[2];
+                    brushColor = new SolidBrush(pieceColor[2]);
                     break;
                 default:
                     break;
@@ -114,11 +239,7 @@ namespace Reversi
 
             if (brushColor != null)
             {
-               
-//                tlcpea.Graphics.FillEllipse(pieceColor, tlcpea.CellBounds);
-                tlcpea.Graphics.FillEllipse(new SolidBrush(brushColor), tlcpea.CellBounds);
-                
-
+                tlcpea.Graphics.FillEllipse(brushColor, tlcpea.CellBounds);
             }
         }
         //Buttons
@@ -164,10 +285,29 @@ namespace Reversi
 
         private void HelpButton_Click(object sender, EventArgs e)
         {
+            //Simply get all the valid moves for every piece of the current player:
+            for (int x = 0; x < boardSize; x++)
+            {
+                for (int y = 0; y < boardSize; y++)
+                {
+                    if (boardState[x, y] == currentPlayer)
+                    {
+                        placingCoord[] helpMoves = this.getValidMoves(x, y, currentPlayer);
+                        if (helpMoves.Length != 0)
+                        { 
+                            //Thus there are possible flips for this coordinate, so x,y is a valid move.
+                            //TODO: Draw a circle or some other indicator on the gameboard.
+                        }
+                    }
+                }
+            }
+
+
         }
 
         private void NewGame()
         {
+            //TODO: Initialise gameBoard with new values.
             this.playerOneIconName.Text = this.playerOne;
             this.playerTwoIconName.Text = this.playerTwo;
         }
