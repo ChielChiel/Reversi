@@ -143,7 +143,6 @@
             this.playerTwoCountText.Size = new System.Drawing.Size(23, 13);
             this.playerTwoCountText.TabIndex = 10;
             this.playerTwoCountText.Text = "X 0";
-            this.playerTwoCountText.Click += new System.EventHandler(this.playerTwoCountText_Click);
             // 
             // playerOneCountText
             // 
