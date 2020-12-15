@@ -328,10 +328,7 @@ namespace Reversi
             return count;
         }
 
-        private void playerTwoCountText_Click(object sender, EventArgs e)
-        {
 
-        }
     }
 
 
