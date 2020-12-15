@@ -83,7 +83,7 @@ namespace Reversi
             playerTwoCountText.Text = "X " + occurences(boardState, 2).ToString();
             this.board.Invalidate();
 
-
+            //checks if there are viable moves and if not it allows for another turn or tells who won.
             List<placingCoord> possibleMoves = viableMoves();
             if(possibleMoves.Count == 0)
             {
