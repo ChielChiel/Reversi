@@ -15,6 +15,7 @@ namespace Reversi
     {
         public String playerOne;
         public String playerTwo;
+        public bool wasViable = true;
         public int boardWidth = 6;
         public int boardHeight = 6;
         TableLayoutPanel board = new TableLayoutPanel();
@@ -69,29 +70,59 @@ namespace Reversi
                 }
                 this.currentPlayer = (this.currentPlayer == 1 ? 2 : 1);
                 this.isHelping = false;
-                Console.WriteLine("helping? " + this.isHelping.ToString());
             }
             else 
             {
+                
                 //There are no pieces flippable so the current player has to do another turn
                 //TODO: Add a warning message
             }
-            if(this.currentPlayer == 1)
-            {
-                this.playerOneIconName.ForeColor = Color.Red;
-                this.playerTwoIconName.ForeColor = Color.Black;
-            }
-            else
-            {
-                this.playerOneIconName.ForeColor = Color.Black;
-                this.playerTwoIconName.ForeColor = Color.Red;
 
-            }
             // here we set the count of the stones on the board
             playerOneCountText.Text = "X " + occurences(boardState, 1).ToString() ;
             playerTwoCountText.Text = "X " + occurences(boardState, 2).ToString();
             this.board.Invalidate();
 
+
+            List<placingCoord> possibleMoves = viableMoves();
+            if(possibleMoves.Count == 0)
+            {
+                if (this.wasViable)
+                {
+                    this.currentPlayer = (this.currentPlayer == 1 ? 2 : 1);
+                    this.wasViable = false;
+                }
+                else
+                {
+                    int black = occurences(boardState, 1);
+                    int white = occurences(boardState, 2);
+                    if(black == white)
+                    {
+                        MessageBox.Show("It's a tie");
+                    }else if(black > white)
+                    {
+                        MessageBox.Show(this.playerOne + "(Black) has won!");
+                    }
+                    else
+                    {
+                        MessageBox.Show(this.playerTwo + "(White) has won!");
+                    }
+                }
+
+            }
+            else
+            {
+                if (this.currentPlayer == 1)
+                {
+                    this.playerOneIconName.ForeColor = Color.Red;
+                    this.playerTwoIconName.ForeColor = Color.Black;
+                }
+                else
+                {
+                    this.playerOneIconName.ForeColor = Color.Black;
+                    this.playerTwoIconName.ForeColor = Color.Red;
+                }
+            }
         }
 
 
@@ -263,24 +294,7 @@ namespace Reversi
 
         private void HelpButton_Click(object sender, EventArgs e)
         {
-            //Simply get all the valid moves for every piece of the current player:            
-            List<placingCoord> possibleMoves = new List<placingCoord>();
-            for (int x = 0; x < this.boardWidth; x++)
-            {
-                for (int y = 0; y < this.boardHeight; y++)
-                {
-                    if (this.boardState[x, y] == 0)
-                    {
-                        //Thus the position is not yet occupied by one of the two player's pieces.
-                        if (this.getValidMoves(x, y, currentPlayer).Length != 0)
-                        {
-                            //Thus there are possible flips for this coordinate, so x,y is a valid move.
-                            possibleMoves.Add(new placingCoord(x,y, 3));
-                        }
-                    }
-                }
-            }
-
+            List<placingCoord> possibleMoves = viableMoves();
             if (possibleMoves.Count != 0)
             {
                 this.isHelping = true;
@@ -304,8 +318,9 @@ namespace Reversi
             this.board.Location = new Point(200, 200);
             this.board.Size = new Size(50 * columns + columns, 50 * rows + rows);
             this.board.BackColor = Color.DarkGreen;
+            this.board.CellPaint -= new TableLayoutCellPaintEventHandler(this.draw);
             this.board.CellPaint += new TableLayoutCellPaintEventHandler(this.draw);
-
+            
             for (; this.board.ColumnCount < columns; this.board.ColumnCount++)
             {
                 this.board.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
@@ -342,6 +357,29 @@ namespace Reversi
             return count;
         }
 
+        //Simply get all the valid moves for every piece of the current player:  
+        private List<placingCoord> viableMoves()
+        {
+            List<placingCoord> possibleMoves = new List<placingCoord>();
+            for (int x = 0; x < this.boardWidth; x++)
+            {
+                for (int y = 0; y < this.boardHeight; y++)
+                {
+                    if (this.boardState[x, y] == 0)
+                    {
+                        //Thus the position is not yet occupied by one of the two player's pieces.
+                        if (this.getValidMoves(x, y, currentPlayer).Length != 0)
+                        {
+                            //Thus there are possible flips for this coordinate, so x,y is a valid move.
+                            possibleMoves.Add(new placingCoord(x, y, 3));
+                        }
+                    }
+                }
+            }
+            return possibleMoves;
+
+
+        }
 
     }
 
