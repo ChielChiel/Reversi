@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Reversi
 {
-    class reversiBot
+    class ReversiBot
     {
     }
 }
