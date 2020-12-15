@@ -34,9 +34,15 @@ namespace Reversi
             this.playerOneIcon.BackColor = pieceColor[1];
             this.playerOneIcon.Region = new Region(path);
             this.playerOneIconName.ForeColor = Color.Red;
-            
+
             this.playerTwoIcon.BackColor = pieceColor[2];
             this.playerTwoIcon.Region = this.playerOneIcon.Region;
+
+            this.playerOneStoneCount.BackColor = pieceColor[1];
+            this.playerOneStoneCount.Region = new Region(path);
+            this.playerTwoStoneCount.BackColor = pieceColor[2];
+            this.playerTwoStoneCount.Region = new Region(path);
+
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -81,7 +87,11 @@ namespace Reversi
                 this.playerTwoIconName.ForeColor = Color.Red;
 
             }
+            // here we set the count of the stones on the board
+            playerOneCountText.Text = "X " + occurences(boardState, 1).ToString() ;
+            playerTwoCountText.Text = "X " + occurences(boardState, 2).ToString();
             this.board.Invalidate();
+
         }
 
 
@@ -315,6 +325,23 @@ namespace Reversi
             this.boardState[columns / 2, rows / 2 - 1] = 2;
             Controls.Add(this.board);
         }
+
+        //checks the occurences of a certain integer within an array , we use this to check the occurences of stones on the board
+        private int occurences(int[,] array, int checkedKey)
+        {
+            int count = 0;
+
+            //Loop through the arrray and check for an occurence
+
+            foreach(int column in array)
+            {
+                if (column == checkedKey)
+                    count++;
+
+            }
+            return count;
+        }
+
 
     }
 
