@@ -101,11 +101,11 @@ namespace Reversi
                         MessageBox.Show("It's a tie");
                     }else if(black > white)
                     {
-                        MessageBox.Show(this.playerOne + "(Black) has won!");
+                        MessageBox.Show("\"" + this.playerOne + "\"(Black) has won!");
                     }
                     else
                     {
-                        MessageBox.Show(this.playerTwo + "(White) has won!");
+                        MessageBox.Show("\"" + this.playerTwo + "\"(White) has won!");
                     }
                 }
 
@@ -317,10 +317,12 @@ namespace Reversi
             this.board.Name = "board";
             this.board.Location = new Point(200, 200);
             this.board.Size = new Size(50 * columns + columns, 50 * rows + rows);
+            this.board.ColumnCount = 0;
+            this.board.RowCount = 0;
             this.board.BackColor = Color.DarkGreen;
-            this.board.CellPaint -= new TableLayoutCellPaintEventHandler(this.draw);
             this.board.CellPaint += new TableLayoutCellPaintEventHandler(this.draw);
-            
+
+
             for (; this.board.ColumnCount < columns; this.board.ColumnCount++)
             {
                 this.board.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
@@ -377,8 +379,6 @@ namespace Reversi
                 }
             }
             return possibleMoves;
-
-
         }
 
     }
