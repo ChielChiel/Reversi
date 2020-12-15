@@ -83,11 +83,11 @@ namespace Reversi
             int column = translatedPoint.X;
             int row = translatedPoint.Y;
             
-            Console.WriteLine(column + "," + row);
+          //  Console.WriteLine(column + "," + row);
 
             //Get here the valid moves/flips for the current coordinates.
             placingCoord[] flips = getValidMoves(column, row, currentPlayer);
-            Console.WriteLine("def flips: " + flips.Length);
+           // Console.WriteLine("def flips: " + flips.Length);
             if (flips.Length != 0)
             {
                 boardState[column, row] = currentPlayer;
@@ -130,6 +130,7 @@ namespace Reversi
         {
             int[] places = new int[] { -1, 0, 1 };
 
+
             List<placingCoord> flipsToReturn = new List<placingCoord>();
 
             if (boardState[column, row] != 0)
@@ -145,22 +146,19 @@ namespace Reversi
                 {
                     try
                     {
-                        //Console.WriteLine("x: " + (column + places[dx]) + ", y: " + (row + places[dy]) + "; " + boardState[column + places[dx], row + places[dy]]);
-                        if (boardState[column + places[dx], row + places[dy]] != currentPlayer && boardState[column + places[dx], row + places[dy]] != 0)
+                        if (boardState[column + places[dx], row + places[dy]] != currentPlayer && boardState[column + places[dx], row + places[dy]] != 0 )
                         {
-                            //Console.WriteLine("x: " +  column + ", y: " + row + "; is a possible move");
-                            //Console.WriteLine("x: " + (column + places[dx]) + ", y: " + (row + places[dy]) + "; could be closed in");
                             
                             //Check here whether the possible moves actually close-in pieces of the opponent.
                             List<placingCoord> tempFlipPieces = new List<placingCoord>();
 
                             try
                             {
-                                for (int i = 1; i < this.boardSize; i++) 
+                                for (int i = 1; i <= this.boardSize; i++) 
                                 {
                                     int tempX = i * places[dx] + column;
                                     int tempY = i * places[dy] + row;
-                                    Console.WriteLine("searching x: " + tempX + ", y: " + tempY + "; for a possible move");
+
                                     if (boardState[tempX, tempY] == currentPlayer)
                                     {
                                         //stop searching
@@ -169,26 +167,25 @@ namespace Reversi
                                     else if (boardState[tempX, tempY] != currentPlayer && boardState[tempX, tempY] != 0)
                                     {
                                         tempFlipPieces.Add(new placingCoord(tempX, tempY, currentPlayer));
-
                                     }
                                     else
                                     {
                                         tempFlipPieces.Clear();
                                     }
                                 }
-                                flipsToReturn.AddRange(tempFlipPieces);
-                                //Console.WriteLine("flips to return?: " + flipsToReturn.Count);
-
+                                
                             }
                             catch (IndexOutOfRangeException)
                             {
-                                //Out of range. But nothing has to be done
+                                //Out of range. Clearing temp pieces
+                                tempFlipPieces.Clear();
                             }
-
+                            flipsToReturn.AddRange(tempFlipPieces);
                         }
                     }
                     catch (IndexOutOfRangeException) {
                         //Out of range. But nothing has to be done
+
                     }
 
 
