@@ -7,17 +7,19 @@ public partial class PopupWindow : Form
     public bool isPerson;
     private TextBox playerOneTextBox;
     private TextBox playerTwoTextBox;
-    private TextBox gameBoardTextBox;
+    private TextBox gameBoardTextBoxWidth;
+    private TextBox gameBoardTextBoxHeight;
 
     public String namePlayerOne;
     public String namePlayerTwo;
-    public int gameBoardSize;
+    public int gameBoardSizeWidth;
+    public int gameBoardSizeHeight;
 
     public PopupWindow(bool isPerson)
     {
         this.isPerson = isPerson;
         this.ControlBox = false;
-        this.Size = new Size(250, 300);
+        this.Size = new Size(300, 300);
         this.Text = "Stel game in";
 
         //Player one textbox
@@ -50,17 +52,32 @@ public partial class PopupWindow : Form
         }
         //boardsize
         Label boardSizeLabel = new Label();
-        boardSizeLabel.Text = "Afmeting van het spelbord";
+        boardSizeLabel.Text = "Afmeting van het spelbord: (breedte bij hoogte)";
         boardSizeLabel.Location = new Point(20, 130);
-        boardSizeLabel.Size = new Size(200, 20);
+        boardSizeLabel.Size = new Size(250, 20);
         boardSizeLabel.Name = "labelBoardSize";
         this.Controls.Add(boardSizeLabel);
 
-        this.gameBoardTextBox = new TextBox();
-        this.gameBoardTextBox.Size = new Size(50, 100);
-        this.gameBoardTextBox.Location = new Point(20, 150);
-        this.gameBoardTextBox.Name = "gameBoardTextBox";
-        this.Controls.Add(this.gameBoardTextBox);
+        this.gameBoardTextBoxWidth = new TextBox();
+        this.gameBoardTextBoxWidth.Size = new Size(50, 100);
+        this.gameBoardTextBoxWidth.Location = new Point(20, 150);
+        this.gameBoardTextBoxWidth.Name = "gameBoardTextBox";
+        this.Controls.Add(this.gameBoardTextBoxWidth);
+
+        Label boardSizeLabelBij = new Label();
+        boardSizeLabelBij.Text = "bij";
+        boardSizeLabelBij.Location = new Point(80, 150);
+        boardSizeLabelBij.Size = new Size(20, 20);
+        boardSizeLabelBij.Name = "labelBoardSizeBij";
+        this.Controls.Add(boardSizeLabelBij);
+
+        
+        this.gameBoardTextBoxHeight = new TextBox();
+        this.gameBoardTextBoxHeight.Size = new Size(50, 100);
+        this.gameBoardTextBoxHeight.Location = new Point(100, 150);
+        this.gameBoardTextBoxHeight.Name = "gameBoardTextBox";
+        this.Controls.Add(this.gameBoardTextBoxHeight);
+        
 
 
 
@@ -95,12 +112,28 @@ public partial class PopupWindow : Form
         bool allOk = true;
         string playerOne = this.playerOneTextBox.Text;
         string playerTwo = (this.isPerson ? this.playerTwoTextBox.Text : "Bot Frank");
-        int BoardSize;
-        if (int.TryParse(this.gameBoardTextBox.Text, out BoardSize))
+        int BoardSizeWidth, BoardSizeHeight;
+        int minAfmeting = 3;
+        int maxAfmeting = 10;
+
+        if (int.TryParse(this.gameBoardTextBoxWidth.Text, out BoardSizeWidth))
         {
             //parsing successful 
-
-            if (BoardSize < 3 && BoardSize > 10)
+            if (BoardSizeWidth < minAfmeting && BoardSizeWidth > maxAfmeting)
+            {
+                //Board heeft juiste afmetingen 
+                allOk = false;
+            }
+        }
+        else
+        {
+            //parsing failed.
+            allOk = false;
+        }
+        if (int.TryParse(this.gameBoardTextBoxHeight.Text, out BoardSizeHeight))
+        {
+            //parsing successful 
+            if (BoardSizeHeight < minAfmeting && BoardSizeHeight > maxAfmeting)
             {
                 //Board heeft juiste afmetingen 
                 allOk = false;
@@ -127,7 +160,8 @@ public partial class PopupWindow : Form
         {
             this.namePlayerOne = playerOne;
             this.namePlayerTwo = playerTwo;
-            this.gameBoardSize = BoardSize;
+            this.gameBoardSizeWidth = BoardSizeWidth;
+            this.gameBoardSizeHeight = BoardSizeHeight;
             this.DialogResult = DialogResult.OK;
             this.Close();
         }
