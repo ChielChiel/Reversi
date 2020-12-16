@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,17 +14,26 @@ namespace Reversi
         public placingCoord defMove;
         private int boardWidth;
         private int boardHeight;
+        private int calcs = 0;
         //bot is always player 2. So no variable needed there.
 
         public ReversiBot(int[,] currentGameState, int boardWidth, int boardHeight)
         {
-            this.boardState = currentGameState;
+            this.boardState = new int[boardWidth, boardHeight];
+            Array.Copy(currentGameState, this.boardState, boardWidth * boardHeight);
             this.boardWidth = boardWidth;
             this.boardHeight = boardHeight;
-
+            Stopwatch stopWatch = new Stopwatch();
+            stopWatch.Start();
             Console.WriteLine("start searching:...");
             this.getBestMove(currentGameState, 2, 3);
-            Console.WriteLine("done searching:...");
+            TimeSpan ts = stopWatch.Elapsed;
+
+            // Format and display the TimeSpan value.
+            string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}",
+                ts.Hours, ts.Minutes, ts.Seconds,
+                ts.Milliseconds / 10);
+            Console.WriteLine("done searching:... at least " + this.calcs + " in "  + elapsedTime);
 
         }
 
@@ -38,7 +48,8 @@ namespace Reversi
             { //Loop door alle mogelijke moves
 
                 int oldVoorsprong = this.defVoorsprong;
-                int[,] tempGameState = gameState;
+                int[,] tempGameState = new int[this.boardWidth, this.boardHeight];
+                Array.Copy(gameState, tempGameState, this.boardWidth * this.boardHeight);
                 tempGameState[move.X, move.Y] = player;
                 placingCoord[] flips = getValidMoves(move.X, move.Y, tempGameState, player);
                 foreach (placingCoord flip in flips)
@@ -46,7 +57,10 @@ namespace Reversi
                     tempGameState[flip.X, flip.Y] = player;
                 }
 
-                getBestMovePerInitialpossibilities(tempGameState, turnOf(2), searchDepth);
+                int[,] tempGameStateToPass = new int[this.boardWidth, this.boardHeight];
+                Array.Copy(tempGameState, tempGameStateToPass, this.boardWidth * this.boardHeight);
+
+                getBestMovePerInitialpossibilities(tempGameStateToPass, turnOf(2), searchDepth);
                 Console.WriteLine($"def voorsprong: {this.defVoorsprong}, bij move {move.ToString()}");
                 /*
                 int TempVoorsprong = occurences(tempGameState, 2) - occurences(tempGameState, 1);
@@ -81,7 +95,9 @@ namespace Reversi
 
                 foreach (placingCoord move in possibleMoves2)
                 { //Loop door alle mogelijke moves
-                    int[,] tempGameState = gameState;
+                    this.calcs++;
+                    int[,] tempGameState = new int[this.boardWidth, this.boardHeight];
+                    Array.Copy(gameState, tempGameState, this.boardWidth * this.boardHeight);
                     tempGameState[move.X, move.Y] = player;
                     placingCoord[] flips = getValidMoves(move.X, move.Y, tempGameState, player);
                     foreach (placingCoord flip in flips)
@@ -110,7 +126,8 @@ namespace Reversi
             //2. Loop through each of these moves
             foreach (placingCoord move in possibleMoves)
             {
-                int[,] tempGameState = gameState;
+                int[,] tempGameState = new int[this.boardWidth, this.boardHeight];
+                Array.Copy(gameState, tempGameState, this.boardWidth * this.boardHeight);
                 tempGameState[move.X, move.Y] = player;
                 placingCoord[] flips = getValidMoves(move.X, move.Y, tempGameState, turnOf(player));
                 foreach (placingCoord flip in flips)
@@ -120,7 +137,10 @@ namespace Reversi
                 //Nu zit dus in gameState de nieuw hypothethische state van deze move.
                 //run dan nu getBestMove nog een keer voor de tegenpartij.
                 //getBestMove(gameState, turnOf(player), searchDepth - 1)
-                getBestMovePerInitialpossibilities(tempGameState, turnOf(player), searchDepth - 1);
+
+                int[,] tempGameStateToPass = new int[this.boardWidth, this.boardHeight];
+                Array.Copy(tempGameState, tempGameStateToPass, this.boardWidth * this.boardHeight);
+                getBestMovePerInitialpossibilities(tempGameStateToPass, turnOf(player), searchDepth - 1);
 
             }
         }

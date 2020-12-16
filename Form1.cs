@@ -89,15 +89,17 @@ namespace Reversi
                 //Geen idee maar gooit hier hele veld vol.
                 Console.WriteLine("bot is aan de beurt.");
                 //Je speelt tegen bot. Bot doet nu zijn move:
-                ReversiBot botFrank = new ReversiBot(this.boardState, this.boardWidth, this.boardHeight);
+                int[,] boardStateToPass = new int[this.boardWidth, this.boardHeight];
+                Array.Copy(this.boardState, boardStateToPass, this.boardHeight * this.boardWidth);
+                ReversiBot botFrank = new ReversiBot(boardStateToPass, this.boardWidth, this.boardHeight);
                 placingCoord[] botFlips = getValidMoves(botFrank.defMove.X , botFrank.defMove.Y, this.currentPlayer);
                 Console.WriteLine($"{botFrank.defMove}, botflips: {botFlips.Length} ");
                 
-                /*
+                
                 if (botFlips.Length != 0)
                 {
 //                    Console.WriteLine(botFrank.defMove);
-                    //this.boardState[botFrank.defMove.X, botFrank.defMove.Y] = this.currentPlayer;
+                    this.boardState[botFrank.defMove.X, botFrank.defMove.Y] = this.currentPlayer;
                    
                     foreach (placingCoord botFlip in botFlips)
                     {
@@ -106,7 +108,7 @@ namespace Reversi
                    
                     this.currentPlayer = 1;
                 }
-                */
+                
                 Console.WriteLine("Bot is er helemaal klaar mee");
 
             }
