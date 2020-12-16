@@ -26,7 +26,11 @@ namespace Reversi
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
             Console.WriteLine("start searching:...");
-            this.getBestMove(currentGameState, 2, 3);
+
+            List<placingCoord> possibleMoves = this.viableMoves(currentGameState, 2);
+            Random random = new Random();
+            int start2 = random.Next(0, possibleMoves.Count);
+            this.defMove = possibleMoves[start2];
             TimeSpan ts = stopWatch.Elapsed;
 
             // Format and display the TimeSpan value.

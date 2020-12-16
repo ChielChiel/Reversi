@@ -81,7 +81,9 @@ namespace Reversi
                     //TODO: Add a warning message
                 }
             }
-            //this.board.Invalidate();
+
+            this.board.Refresh();
+
 
 
             if (this.currentPlayer == 2 && this.isBotPlaying == true)
