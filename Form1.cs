@@ -8,8 +8,8 @@ namespace Reversi
 {
     public partial class MainWindow : Form
     {
-        public String playerOne;
-        public String playerTwo;
+        public string playerOne;
+        public string playerTwo;
         public bool wasViable = true;
         public int boardWidth = 6;
         public int boardHeight = 6;
@@ -36,9 +36,9 @@ namespace Reversi
             this.playerTwoIcon.Region = this.playerOneIcon.Region;
 
             this.playerOneStoneCount.BackColor = pieceColor[1];
-            this.playerOneStoneCount.Region = new Region(path);
+            this.playerOneStoneCount.Region = this.playerOneIcon.Region;
             this.playerTwoStoneCount.BackColor = pieceColor[2];
-            this.playerTwoStoneCount.Region = new Region(path);
+            this.playerTwoStoneCount.Region = this.playerOneIcon.Region;
 
         }
 
@@ -55,22 +55,15 @@ namespace Reversi
             int column = translatedPoint.X;
             int row = translatedPoint.Y;
 
-            if (this.currentPlayer == 2 && this.isBotPlaying)
+            if ((this.currentPlayer == 2 && !this.isBotPlaying) || this.currentPlayer == 1)
             {
-
-            }
-            else
-            {
-
                 //Get here the valid moves/flips for the current coordinates.
                 placingCoord[] flips = getValidMoves(column, row, currentPlayer);
                 if (flips.Length != 0)
                 {
                     this.boardState[column, row] = currentPlayer;
                     foreach (placingCoord flip in flips)
-                    {
                         this.boardState[flip.X, flip.Y] = currentPlayer;
-                    }
                     this.currentPlayer = (this.currentPlayer == 1 ? 2 : 1);
                     this.isHelping = false;
                 }
@@ -78,40 +71,45 @@ namespace Reversi
                 {
 
                     //There are no pieces flippable so the current player has to do another turn
-                    //TODO: Add a warning message
+                    MessageBox.Show("Hier kan je geen steen plaatsen. Kies een andere zet. Of gebruik help.");
                 }
             }
-
-            this.board.Refresh();
-
 
 
             if (this.currentPlayer == 2 && this.isBotPlaying == true)
             {
-                //Geen idee maar gooit hier hele veld vol.
+               
+                this.board.Refresh();
                 Console.WriteLine("bot is aan de beurt.");
+                
                 //Je speelt tegen bot. Bot doet nu zijn move:
                 int[,] boardStateToPass = new int[this.boardWidth, this.boardHeight];
                 Array.Copy(this.boardState, boardStateToPass, this.boardHeight * this.boardWidth);
                 ReversiBot botFrank = new ReversiBot(boardStateToPass, this.boardWidth, this.boardHeight);
-                placingCoord[] botFlips = getValidMoves(botFrank.defMove.X , botFrank.defMove.Y, this.currentPlayer);
-                Console.WriteLine($"{botFrank.defMove}, botflips: {botFlips.Length} ");
-                
-                
-                if (botFlips.Length != 0)
+
+                if (!botFrank.defMove.Equals(new placingCoord(-1, -1, 3)))
                 {
-//                    Console.WriteLine(botFrank.defMove);
-                    this.boardState[botFrank.defMove.X, botFrank.defMove.Y] = this.currentPlayer;
-                   
-                    foreach (placingCoord botFlip in botFlips)
+                    //Een zet mogelijk van botFrank.
+                    placingCoord[] botFlips = getValidMoves(botFrank.defMove.X, botFrank.defMove.Y, this.currentPlayer);
+                    Console.WriteLine($"{botFrank.defMove}, botflips: {botFlips.Length} ");
+
+
+                    if (botFlips.Length != 0)
                     {
-                        this.boardState[botFlip.X, botFlip.Y] = currentPlayer;
+                        this.boardState[botFrank.defMove.X, botFrank.defMove.Y] = this.currentPlayer;
+
+                        foreach (placingCoord botFlip in botFlips)
+                            this.boardState[botFlip.X, botFlip.Y] = currentPlayer;
+
+                        this.currentPlayer = 1;
                     }
-                   
-                    this.currentPlayer = 1;
+                }
+                else 
+                {
+                    Console.WriteLine("Bot frank passed ff");
                 }
                 
-                Console.WriteLine("Bot is er helemaal klaar mee");
+                Console.WriteLine("Bot is klaar met zn zet.");
 
             }
 
@@ -166,22 +164,17 @@ namespace Reversi
 
         private Point getPointFromMEA(Point meaPoint) 
         {
-            int x = (int)(meaPoint.X / 50f);
-            int y = (int)(meaPoint.Y / 50f);
-            return new Point(x, y);
+            return new Point((int)(meaPoint.X / 50f), (int)(meaPoint.Y / 50f));
         }
 
         private placingCoord[] getValidMoves(int column, int row, int currentPlayer)
         {
             int[] places = new int[] { -1, 0, 1 };
-
             List<placingCoord> flipsToReturn = new List<placingCoord>();
 
+            //This means that the place is already occupied by one of the player's pieces.
             if (this.boardState[column, row] != 0 && this.boardState[column,row] != 3)
-            {
-                //This means that the place is already occupied by one of the player's pieces.
                 return flipsToReturn.ToArray();
-            }
 
             //Loop through every piece surrounding the clicked one.
             for (int dx = 0; dx < places.Length; dx++) 
@@ -202,19 +195,13 @@ namespace Reversi
                                     int tempX = i * places[dx] + column;
                                     int tempY = i * places[dy] + row;
 
+                                    //stop searching
                                     if (this.boardState[tempX, tempY] == currentPlayer)
-                                    {
-                                        //stop searching
                                         i = maxBoardDimension;
-                                    }
                                     else if (this.boardState[tempX, tempY] != currentPlayer && this.boardState[tempX, tempY] != 0)
-                                    {
                                         tempFlipPieces.Add(new placingCoord(tempX, tempY, currentPlayer));
-                                    }
                                     else
-                                    {
                                         tempFlipPieces.Clear();
-                                    }
                                 }
                                 
                             }
@@ -229,29 +216,13 @@ namespace Reversi
                     catch (IndexOutOfRangeException) {
                         //Out of range. But nothing has to be done
                     }
-
-
                 }
             }
             //Return all the pieces that will be flipped.
             return flipsToReturn.ToArray();
         }
 
-        //Struct holding the x and y coordinates of a (possible) flip as well as the current player.
-        public struct placingCoord
-        {
-            public placingCoord(int x, int y, int player)
-            {
-                X = x;
-                Y = y;
-                currentPlayer = player;
-            }
-            public int X { get; set; }
-            public int Y { get; set; }
-            public int currentPlayer { get; set; }
-           //Custom ToString method for easy debugging.
-            public override string ToString() => $"({X}, {Y}) now for: player{currentPlayer}";
-        }
+        
     
         private void draw(object sender, TableLayoutCellPaintEventArgs tlcpea)
         {
@@ -283,9 +254,7 @@ namespace Reversi
             }
 
             if (tlcpea.Column == this.boardWidth - 1 && tlcpea.Row == this.boardHeight - 1)
-            {
                 this.isHelping = false;
-            }  
         }
         //Buttons
         private void NewGameButton_Click(object sender, EventArgs e)
@@ -301,13 +270,10 @@ namespace Reversi
                     this.boardHeight = newGame.gameBoardSizeHeight;
                     Console.WriteLine("New \"" + this.playerOne + "\"v\"" + this.playerTwo + "\" game");
                     this.isBotPlaying = false;
-
                     this.NewGame(this.boardWidth, this.boardHeight);
                 }
                 else
-                {
                     Console.WriteLine("No new game");
-                }
             }
         }
 
@@ -328,9 +294,7 @@ namespace Reversi
                     
                 }
                 else
-                {
                     Console.WriteLine("No new game");
-                }
             }
         }
 
@@ -341,9 +305,7 @@ namespace Reversi
             {
                 this.isHelping = true;
                 foreach (placingCoord helpMove in possibleMoves)
-                {
                     this.boardState[helpMove.X, helpMove.Y] = 3;
-                }
                 this.board.Invalidate();
             }
         }
@@ -364,15 +326,10 @@ namespace Reversi
             this.board.BackColor = Color.DarkGreen;
             this.board.CellPaint += new TableLayoutCellPaintEventHandler(this.draw);
 
-
             for (; this.board.ColumnCount < columns; this.board.ColumnCount++)
-            {
                 this.board.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            }
             for (; this.board.RowCount < rows; this.board.RowCount++)
-            {
                 this.board.RowStyles.Add(new RowStyle(SizeType.Absolute, 50F));
-            }
             this.board.MouseClick += new MouseEventHandler(this.Clicked);
 
             this.board.CellBorderStyle = TableLayoutPanelCellBorderStyle.Single;
@@ -389,14 +346,11 @@ namespace Reversi
         private int occurences(int[,] array, int checkedKey)
         {
             int count = 0;
-
             //Loop through the arrray and check for an occurence
-
             foreach(int column in array)
             {
                 if (column == checkedKey)
                     count++;
-
             }
             return count;
         }
@@ -409,15 +363,9 @@ namespace Reversi
             {
                 for (int y = 0; y < this.boardHeight; y++)
                 {
-                    if (this.boardState[x, y] == 0)
-                    {
-                        //Thus the position is not yet occupied by one of the two player's pieces.
-                        if (this.getValidMoves(x, y, currentPlayer).Length != 0)
-                        {
-                            //Thus there are possible flips for this coordinate, so x,y is a valid move.
+                    //If the position is unoccupied and there is a valid move than x,y is a viable move. So add that move.
+                    if (this.boardState[x, y] == 0 && this.getValidMoves(x, y, currentPlayer).Length != 0)
                             possibleMoves.Add(new placingCoord(x, y, 3));
-                        }
-                    }
                 }
             }
             return possibleMoves;
@@ -425,8 +373,21 @@ namespace Reversi
 
     }
 
-
-
+    //Struct holding the x and y coordinates of a (possible) flip as well as the current player.
+    public struct placingCoord
+    {
+        public placingCoord(int x, int y, int player)
+        {
+            X = x;
+            Y = y;
+            currentPlayer = player;
+        }
+        public int X { get; set; }
+        public int Y { get; set; }
+        public int currentPlayer { get; set; }
+        //Custom ToString method for easy debugging.
+        public override string ToString() => $"({X}, {Y}) now for: player{currentPlayer}";
+    }
 
 
 }

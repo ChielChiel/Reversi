@@ -10,8 +10,8 @@ public partial class PopupWindow : Form
     private TextBox gameBoardTextBoxWidth;
     private TextBox gameBoardTextBoxHeight;
 
-    public String namePlayerOne;
-    public String namePlayerTwo;
+    public string namePlayerOne;
+    public string namePlayerTwo;
     public int gameBoardSizeWidth;
     public int gameBoardSizeHeight;
 
@@ -77,9 +77,6 @@ public partial class PopupWindow : Form
         this.gameBoardTextBoxHeight.Location = new Point(100, 150);
         this.gameBoardTextBoxHeight.Name = "gameBoardTextBox";
         this.Controls.Add(this.gameBoardTextBoxHeight);
-        
-
-
 
         //Cancel button
         Button cancelButton = new Button();
@@ -89,7 +86,6 @@ public partial class PopupWindow : Form
         cancelButton.Text = "Annuleer";
         cancelButton.Click += this.cancelClick;
         this.CancelButton = cancelButton;
-
         this.Controls.Add(cancelButton);
 
         //Submit button
@@ -100,10 +96,7 @@ public partial class PopupWindow : Form
         submitButton.Text = "Start game";
         submitButton.Click += this.submitClick;
         this.AcceptButton = submitButton;
-
         this.Controls.Add(submitButton);
-
-
 
     }
 
@@ -118,42 +111,27 @@ public partial class PopupWindow : Form
 
         if (int.TryParse(this.gameBoardTextBoxWidth.Text, out BoardSizeWidth))
         {
-            //parsing successful 
-            if (BoardSizeWidth < minAfmeting && BoardSizeWidth > maxAfmeting)
-            {
-                //Board heeft juiste afmetingen 
+            //If it doesn't have the right dimensions than game shouldn't start
+            if (BoardSizeWidth < minAfmeting || BoardSizeWidth > maxAfmeting)
                 allOk = false;
-            }
         }
-        else
-        {
-            //parsing failed.
+        else //parsing failed.
             allOk = false;
-        }
-        if (int.TryParse(this.gameBoardTextBoxHeight.Text, out BoardSizeHeight))
+        
+        if (int.TryParse(this.gameBoardTextBoxHeight.Text, out BoardSizeHeight)) //parsing successful 
         {
-            //parsing successful 
-            if (BoardSizeHeight < minAfmeting && BoardSizeHeight > maxAfmeting)
-            {
-                //Board heeft juiste afmetingen 
+            //If it doesn't have the right dimensions than game shouldn't start
+            if (BoardSizeHeight < minAfmeting || BoardSizeHeight > maxAfmeting)
                 allOk = false;
-            }
         }
-        else
-        {
-            //parsing failed.
+        else //parsing failed.
             allOk = false;
-        }
 
         if (String.IsNullOrEmpty(this.playerOneTextBox.Text))
-        {
             allOk = false;
-        }
 
         if (this.isPerson && String.IsNullOrEmpty(this.playerOneTextBox.Text))
-        {
             allOk = false;
-        }
 
 
         if (allOk)
@@ -167,10 +145,8 @@ public partial class PopupWindow : Form
         }
         else
         {
-            Console.WriteLine("Fix je inputs");
+            MessageBox.Show("De gegeven inputs kloppen niet. \n Minimale afmeting veld is 3x3 en Max is 10x10");
         }
-
-
     }
 
     private void cancelClick(object o, EventArgs e)
@@ -178,6 +154,5 @@ public partial class PopupWindow : Form
         this.DialogResult = DialogResult.Cancel;
         this.Close();
     }
-
 
 }
