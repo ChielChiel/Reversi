@@ -19,6 +19,7 @@ namespace Reversi
         IDictionary<int, Color> pieceColor = new Dictionary<int, Color> { { 1, Color.Black }, { 2, Color.White } };
 
         private bool isHelping = false;
+        private bool isBotPlaying = false;
         
         public MainWindow()
 
@@ -53,25 +54,63 @@ namespace Reversi
             Point translatedPoint = this.getPointFromMEA(mea.Location);
             int column = translatedPoint.X;
             int row = translatedPoint.Y;
-           
-            //Get here the valid moves/flips for the current coordinates.
-            placingCoord[] flips = getValidMoves(column, row, currentPlayer);
-            if (flips.Length != 0)
+
+            if (this.currentPlayer == 2 && this.isBotPlaying)
             {
-                this.boardState[column, row] = currentPlayer;
-                foreach (placingCoord flip in flips)
+
+            }
+            else
+            {
+
+                //Get here the valid moves/flips for the current coordinates.
+                placingCoord[] flips = getValidMoves(column, row, currentPlayer);
+                if (flips.Length != 0)
                 {
-                    this.boardState[flip.X, flip.Y] = currentPlayer;
+                    this.boardState[column, row] = currentPlayer;
+                    foreach (placingCoord flip in flips)
+                    {
+                        this.boardState[flip.X, flip.Y] = currentPlayer;
+                    }
+                    this.currentPlayer = (this.currentPlayer == 1 ? 2 : 1);
+                    this.isHelping = false;
                 }
-                this.currentPlayer = (this.currentPlayer == 1 ? 2 : 1);
-                this.isHelping = false;
+                else
+                {
+
+                    //There are no pieces flippable so the current player has to do another turn
+                    //TODO: Add a warning message
+                }
             }
-            else 
+            //this.board.Invalidate();
+
+
+            if (this.currentPlayer == 2 && this.isBotPlaying == true)
             {
+                //Geen idee maar gooit hier hele veld vol.
+                Console.WriteLine("bot is aan de beurt.");
+                //Je speelt tegen bot. Bot doet nu zijn move:
+                ReversiBot botFrank = new ReversiBot(this.boardState, this.boardWidth, this.boardHeight);
+                placingCoord[] botFlips = getValidMoves(botFrank.defMove.X , botFrank.defMove.Y, this.currentPlayer);
+                Console.WriteLine($"{botFrank.defMove}, botflips: {botFlips.Length} ");
                 
-                //There are no pieces flippable so the current player has to do another turn
-                //TODO: Add a warning message
+                /*
+                if (botFlips.Length != 0)
+                {
+//                    Console.WriteLine(botFrank.defMove);
+                    //this.boardState[botFrank.defMove.X, botFrank.defMove.Y] = this.currentPlayer;
+                   
+                    foreach (placingCoord botFlip in botFlips)
+                    {
+                        this.boardState[botFlip.X, botFlip.Y] = currentPlayer;
+                    }
+                   
+                    this.currentPlayer = 1;
+                }
+                */
+                Console.WriteLine("Bot is er helemaal klaar mee");
+
             }
+
 
             // here we set the count of the stones on the board
             playerOneCountText.Text = "X " + occurences(boardState, 1).ToString() ;
@@ -257,6 +296,8 @@ namespace Reversi
                     this.boardWidth = newGame.gameBoardSizeWidth;
                     this.boardHeight = newGame.gameBoardSizeHeight;
                     Console.WriteLine("New \"" + this.playerOne + "\"v\"" + this.playerTwo + "\" game");
+                    this.isBotPlaying = false;
+
                     this.NewGame(this.boardWidth, this.boardHeight);
                 }
                 else
@@ -278,7 +319,9 @@ namespace Reversi
                     this.boardWidth = newGame.gameBoardSizeWidth;
                     this.boardHeight = newGame.gameBoardSizeHeight;
                     Console.WriteLine("New \"" + this.playerOne + "\"v\"" + this.playerTwo + "\" game");
+                    this.isBotPlaying = true;
                     this.NewGame(this.boardWidth, this.boardHeight);
+                    
                 }
                 else
                 {
