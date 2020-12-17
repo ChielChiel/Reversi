@@ -34,19 +34,13 @@ namespace Reversi
 
             this.playerTwoIcon.BackColor = pieceColor[2];
             this.playerTwoIcon.Region = this.playerOneIcon.Region;
-
-            this.playerOneStoneCount.BackColor = pieceColor[1];
-            this.playerOneStoneCount.Region = this.playerOneIcon.Region;
-            this.playerTwoStoneCount.BackColor = pieceColor[2];
-            this.playerTwoStoneCount.Region = this.playerOneIcon.Region;
-
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
             this.Text = "Reversi";
-            this.Width = 800;
-            this.Height = 800;
+            this.Width = 1000;
+            this.Height = 900;
         }
 
         private void Clicked(object sender, MouseEventArgs mea)
@@ -58,20 +52,21 @@ namespace Reversi
             if ((this.currentPlayer == 2 && !this.isBotPlaying) || this.currentPlayer == 1)
             {
                 //Get here the valid moves/flips for the current coordinates.
-                placingCoord[] flips = getValidMoves(column, row, currentPlayer);
+                placingCoord[] flips = getFlipsWithMove(column, row, currentPlayer);
                 if (flips.Length != 0)
                 {
                     this.boardState[column, row] = currentPlayer;
                     foreach (placingCoord flip in flips)
+                    {
                         this.boardState[flip.X, flip.Y] = currentPlayer;
+                    }
                     this.currentPlayer = (this.currentPlayer == 1 ? 2 : 1);
                     this.isHelping = false;
                 }
                 else
                 {
-
                     //There are no pieces flippable so the current player has to do another turn
-                    MessageBox.Show("Hier kan je geen steen plaatsen. Kies een andere zet. Of gebruik help.");
+                    //MessageBox.Show("Hier kan je geen steen plaatsen. Kies een andere zet. Of gebruik help.");
                 }
             }
 
@@ -90,9 +85,8 @@ namespace Reversi
                 if (!botFrank.defMove.Equals(new placingCoord(-1, -1, 3)))
                 {
                     //Een zet mogelijk van botFrank.
-                    placingCoord[] botFlips = getValidMoves(botFrank.defMove.X, botFrank.defMove.Y, this.currentPlayer);
+                    placingCoord[] botFlips = getFlipsWithMove(botFrank.defMove.X, botFrank.defMove.Y, this.currentPlayer);
                     Console.WriteLine($"{botFrank.defMove}, botflips: {botFlips.Length} ");
-
 
                     if (botFlips.Length != 0)
                     {
@@ -113,10 +107,9 @@ namespace Reversi
 
             }
 
-
             // here we set the count of the stones on the board
-            playerOneCountText.Text = "X " + occurences(boardState, 1).ToString() ;
-            playerTwoCountText.Text = "X " + occurences(boardState, 2).ToString();
+            this.playerOneIconName.Text = this.playerOne + $" | {occurences(boardState, 1)} Punten";
+            this.playerTwoIconName.Text = this.playerTwo + $" | {occurences(boardState, 2)} Punten";
             this.board.Invalidate();
 
             //checks if there are viable moves and if not it allows for another turn or tells who won.
@@ -137,11 +130,11 @@ namespace Reversi
                         MessageBox.Show("It's a tie");
                     }else if(black > white)
                     {
-                        MessageBox.Show("\"" + this.playerOne + "\"(Black) has won!");
+                        MessageBox.Show("\"" + this.playerOne + "\" (Black) has won!");
                     }
                     else
                     {
-                        MessageBox.Show("\"" + this.playerTwo + "\"(White) has won!");
+                        MessageBox.Show("\"" + this.playerTwo + "\" (White) has won!");
                     }
                 }
 
@@ -161,13 +154,15 @@ namespace Reversi
             }
         }
 
-
+        //Converts x and y coordinates of the mouseclick to a column and row.
         private Point getPointFromMEA(Point meaPoint) 
         {
             return new Point((int)(meaPoint.X / 50f), (int)(meaPoint.Y / 50f));
         }
 
-        private placingCoord[] getValidMoves(int column, int row, int currentPlayer)
+
+        //returns all of the board positions that get flipped to the current player if it were to click on that position.
+        private placingCoord[] getFlipsWithMove(int column, int row, int currentPlayer)
         {
             int[] places = new int[] { -1, 0, 1 };
             List<placingCoord> flipsToReturn = new List<placingCoord>();
@@ -183,6 +178,7 @@ namespace Reversi
                 {
                     try
                     {
+                        //Check if the neighbouring position is not from your or if its empty
                         if (this.boardState[column + places[dx], row + places[dy]] != currentPlayer && this.boardState[column + places[dx], row + places[dy]] != 0 )
                         {
                             //Check here whether the possible moves actually close-in pieces of the opponent.
@@ -194,16 +190,15 @@ namespace Reversi
                                 {
                                     int tempX = i * places[dx] + column;
                                     int tempY = i * places[dy] + row;
-
-                                    //stop searching
-                                    if (this.boardState[tempX, tempY] == currentPlayer)
+                                    int tempBoardStateInt = this.boardState[tempX, tempY];
+                                    
+                                    if (tempBoardStateInt == currentPlayer) //stop searching
                                         i = maxBoardDimension;
-                                    else if (this.boardState[tempX, tempY] != currentPlayer && this.boardState[tempX, tempY] != 0)
+                                    else if (tempBoardStateInt != currentPlayer && tempBoardStateInt != 0)
                                         tempFlipPieces.Add(new placingCoord(tempX, tempY, currentPlayer));
                                     else
                                         tempFlipPieces.Clear();
-                                }
-                                
+                                }            
                             }
                             catch (IndexOutOfRangeException)
                             {
@@ -214,6 +209,7 @@ namespace Reversi
                         }
                     }
                     catch (IndexOutOfRangeException) {
+
                         //Out of range. But nothing has to be done
                     }
                 }
@@ -250,8 +246,9 @@ namespace Reversi
                 if (drawHelp)
                     tlcpea.Graphics.FillEllipse(brushColor, tlcpea.CellBounds.Location.X + 10, tlcpea.CellBounds.Location.Y + 10, tlcpea.CellBounds.Width - 20, tlcpea.CellBounds.Height - 20);
                 else 
-                    tlcpea.Graphics.FillEllipse(brushColor, tlcpea.CellBounds);
+                    tlcpea.Graphics.FillEllipse(brushColor, tlcpea.CellBounds.Location.X + 5, tlcpea.CellBounds.Location.Y + 5, tlcpea.CellBounds.Width - 10, tlcpea.CellBounds.Height - 10);
             }
+            tlcpea.Graphics.DrawRectangle(Pens.Black, tlcpea.CellBounds.Location.X, tlcpea.CellBounds.Location.Y, tlcpea.CellBounds.Width, tlcpea.CellBounds.Height);
 
             if (tlcpea.Column == this.boardWidth - 1 && tlcpea.Row == this.boardHeight - 1)
                 this.isHelping = false;
@@ -300,40 +297,48 @@ namespace Reversi
 
         private void HelpButton_Click(object sender, EventArgs e)
         {
-            List<placingCoord> possibleMoves = viableMoves();
-            if (possibleMoves.Count != 0)
+            if (this.playerOne != null)
             {
-                this.isHelping = true;
-                foreach (placingCoord helpMove in possibleMoves)
-                    this.boardState[helpMove.X, helpMove.Y] = 3;
-                this.board.Invalidate();
+                List<placingCoord> possibleMoves = viableMoves();
+                if (possibleMoves.Count != 0)
+                {
+                    this.isHelping = true;
+                    foreach (placingCoord helpMove in possibleMoves)
+                        this.boardState[helpMove.X, helpMove.Y] = 3;
+                    this.board.Invalidate();
+                }
+            }
+            else 
+            {
+                Console.WriteLine("spel nog niet gestart");
+                MessageBox.Show("Start het spel door op \"Tegen elkaar spelen\" of \"Tegen een AI spelen\" te klikken. De afmetingen van het veld moeten minimaal 3x3 zijn en maximaal 10x10. Veel speelplezier.");
             }
         }
 
+        //Function that initialises a new game.
         private void NewGame(int columns, int rows) 
         {
-            //TODO: Initialise gameBoard with new values.
-            this.playerOneIconName.Text = this.playerOne;
-            this.playerTwoIconName.Text = this.playerTwo;
+            this.playerOneIconName.Text = this.playerOne + " | 2 Punten";
+            this.playerTwoIconName.Text = this.playerTwo + " | 2 Punten";
             
             this.boardState = new int[columns, rows];
 
             this.board.Name = "board";
-            this.board.Location = new Point(200, 200);
+            this.board.Location = new Point(250, 260);
             this.board.Size = new Size(50 * columns + columns, 50 * rows + rows);
             this.board.ColumnCount = 0;
             this.board.RowCount = 0;
             this.board.BackColor = Color.DarkGreen;
             this.board.CellPaint += new TableLayoutCellPaintEventHandler(this.draw);
+            this.board.CellBorderStyle = TableLayoutPanelCellBorderStyle.None;
+            this.board.MouseClick += new MouseEventHandler(this.Clicked);
 
+            //Set rows and columns on the board.
             for (; this.board.ColumnCount < columns; this.board.ColumnCount++)
                 this.board.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
             for (; this.board.RowCount < rows; this.board.RowCount++)
                 this.board.RowStyles.Add(new RowStyle(SizeType.Absolute, 50F));
-            this.board.MouseClick += new MouseEventHandler(this.Clicked);
-
-            this.board.CellBorderStyle = TableLayoutPanelCellBorderStyle.Single;
-
+            
             //Setup first 4 pieces in the middle of the board:
             this.boardState[columns / 2 - 1, rows / 2 - 1] = 1;
             this.boardState[columns / 2 - 1, rows / 2] = 2;
@@ -341,17 +346,15 @@ namespace Reversi
             this.boardState[columns / 2, rows / 2 - 1] = 2;
             Controls.Add(this.board);
         }
+        
 
-        //checks the occurences of a certain integer within an array , we use this to check the occurences of stones on the board
+        //checks the occurences of a certain integer within an array, we use this to check the occurences of stones on the board
         private int occurences(int[,] array, int checkedKey)
         {
             int count = 0;
-            //Loop through the arrray and check for an occurence
-            foreach(int column in array)
-            {
+            foreach(int column in array) //Loop through the arrray and check for an occurence
                 if (column == checkedKey)
                     count++;
-            }
             return count;
         }
 
@@ -364,7 +367,7 @@ namespace Reversi
                 for (int y = 0; y < this.boardHeight; y++)
                 {
                     //If the position is unoccupied and there is a valid move than x,y is a viable move. So add that move.
-                    if (this.boardState[x, y] == 0 && this.getValidMoves(x, y, currentPlayer).Length != 0)
+                    if (this.boardState[x, y] == 0 && this.getFlipsWithMove(x, y, currentPlayer).Length != 0)
                             possibleMoves.Add(new placingCoord(x, y, 3));
                 }
             }
@@ -386,7 +389,7 @@ namespace Reversi
         public int Y { get; set; }
         public int currentPlayer { get; set; }
         //Custom ToString method for easy debugging.
-        public override string ToString() => $"({X}, {Y}) now for: player{currentPlayer}";
+        public override string ToString() => $"({X}, {Y}) is now for: player{currentPlayer}";
     }
 
 
