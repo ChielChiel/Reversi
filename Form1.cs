@@ -28,6 +28,7 @@ namespace Reversi
             GraphicsPath path = new GraphicsPath();
             path.AddEllipse(0, 0, 50, 50);
 
+
             this.playerOneIcon.BackColor = pieceColor[1];
             this.playerOneIcon.Region = new Region(path);
             this.playerOneIconName.ForeColor = Color.Red;
@@ -331,6 +332,7 @@ namespace Reversi
             this.board.BackColor = Color.DarkGreen;
             this.board.CellPaint += new TableLayoutCellPaintEventHandler(this.draw);
             this.board.CellBorderStyle = TableLayoutPanelCellBorderStyle.None;
+            this.board.MouseClick -= new MouseEventHandler(this.Clicked);
             this.board.MouseClick += new MouseEventHandler(this.Clicked);
 
             //Set rows and columns on the board.
