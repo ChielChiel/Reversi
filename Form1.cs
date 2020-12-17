@@ -76,7 +76,6 @@ namespace Reversi
             {
                
                 this.board.Refresh();
-                Console.WriteLine("bot is aan de beurt.");
                 
                 //Je speelt tegen bot. Bot doet nu zijn move:
                 int[,] boardStateToPass = new int[this.boardWidth, this.boardHeight];
@@ -87,7 +86,6 @@ namespace Reversi
                 {
                     //Een zet mogelijk van botFrank.
                     placingCoord[] botFlips = getFlipsWithMove(botFrank.defMove.X, botFrank.defMove.Y, this.currentPlayer);
-                    Console.WriteLine($"{botFrank.defMove}, botflips: {botFlips.Length} ");
 
                     if (botFlips.Length != 0)
                     {
@@ -99,12 +97,6 @@ namespace Reversi
                         this.currentPlayer = 1;
                     }
                 }
-                else 
-                {
-                    Console.WriteLine("Bot frank passed ff");
-                }
-                
-                Console.WriteLine("Bot is klaar met zn zet.");
 
             }
 
@@ -266,12 +258,9 @@ namespace Reversi
                     this.playerTwo = newGame.namePlayerTwo;
                     this.boardWidth = newGame.gameBoardSizeWidth;
                     this.boardHeight = newGame.gameBoardSizeHeight;
-                    Console.WriteLine("New \"" + this.playerOne + "\"v\"" + this.playerTwo + "\" game");
                     this.isBotPlaying = false;
                     this.NewGame(this.boardWidth, this.boardHeight);
                 }
-                else
-                    Console.WriteLine("No new game");
             }
         }
 
@@ -286,13 +275,11 @@ namespace Reversi
                     this.playerTwo = newGame.namePlayerTwo;
                     this.boardWidth = newGame.gameBoardSizeWidth;
                     this.boardHeight = newGame.gameBoardSizeHeight;
-                    Console.WriteLine("New \"" + this.playerOne + "\"v\"" + this.playerTwo + "\" game");
                     this.isBotPlaying = true;
                     this.NewGame(this.boardWidth, this.boardHeight);
                     
                 }
-                else
-                    Console.WriteLine("No new game");
+
             }
         }
 
@@ -311,7 +298,6 @@ namespace Reversi
             }
             else 
             {
-                Console.WriteLine("spel nog niet gestart");
                 MessageBox.Show("Start het spel door op \"Tegen elkaar spelen\" of \"Tegen een AI spelen\" te klikken. De afmetingen van het veld moeten minimaal 3x3 zijn en maximaal 10x10. Veel speelplezier.");
             }
         }

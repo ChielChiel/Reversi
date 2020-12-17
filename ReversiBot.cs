@@ -17,12 +17,10 @@ namespace Reversi
             this.boardWidth = boardWidth;
             this.boardHeight = boardHeight;
 
-            Console.WriteLine("start searching:...");
 
             List<placingCoord> possibleMoves = this.viableMoves(currentGameState, 2);
             if (possibleMoves.Count == 0)
             {
-                Console.WriteLine("No moves available for me...");
                 this.defMove = new placingCoord(-1, -1, 3);
             }
             else
@@ -44,7 +42,6 @@ namespace Reversi
                     }
                 }
             }
-            Console.WriteLine("done searching.");
         }
 
         private placingCoord[] getValidMoves(int column, int row, int[,] gameState, int currentPlayer)
