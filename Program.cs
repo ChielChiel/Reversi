@@ -25,6 +25,8 @@ namespace Reversi
             Application.Run(new MainWindow());
         }
 
+
+
         //Voor displays met hogere dpi
         /*
         [System.Runtime.InteropServices.DllImport("user32.dll")]
