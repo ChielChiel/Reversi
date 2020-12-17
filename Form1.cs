@@ -332,6 +332,7 @@ namespace Reversi
             this.board.BackColor = Color.DarkGreen;
             this.board.CellPaint += new TableLayoutCellPaintEventHandler(this.draw);
             this.board.CellBorderStyle = TableLayoutPanelCellBorderStyle.None;
+            this.board.MouseClick -= new MouseEventHandler(this.Clicked);
             this.board.MouseClick += new MouseEventHandler(this.Clicked);
 
             //Set rows and columns on the board.
