@@ -28,6 +28,7 @@ namespace Reversi
             GraphicsPath path = new GraphicsPath();
             path.AddEllipse(0, 0, 50, 50);
 
+
             this.playerOneIcon.BackColor = pieceColor[1];
             this.playerOneIcon.Region = new Region(path);
             this.playerOneIconName.ForeColor = Color.Red;
